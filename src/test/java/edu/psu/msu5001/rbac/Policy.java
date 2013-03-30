@@ -1,21 +1,17 @@
 package edu.psu.msu5001.rbac;
 
-import java.util.*;
-import org.h2.*;
+import java.util.HashSet;
 
 public class Policy {
 	
 	private HashSet<Role> roleSet;
-	private HashSet<Permission> permissionSet = new HashSet<Permission>();
-	private HashMap<Role, HashSet<Role>> roleHierarchy;
-	private HashMap<Integer, HashSet<Permission>> rolePermissionsMap;
 	
-	
-	public Policy() {
-		
+	public HashSet<Role> getRoleSet() {
+		return roleSet;
 	}
-	
-	public static void main(String [] args) {
-		System.out.println("Hello, World!");
+
+	public void setRoleSet(HashSet<Role> roleSet) {
+		this.roleSet = roleSet;
 	}
+
 }
