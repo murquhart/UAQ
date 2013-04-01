@@ -5,7 +5,7 @@ import edu.psu.msu5001.rbac.*;
 public class PolicyGenerator {
 	
 	public static Policy generatePolicy() {
-		Policy p = new Policy();
+		Policy p = null;
 		return p;
 	}
 

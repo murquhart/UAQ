@@ -10,10 +10,13 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Uaq UaqEngine = new Uaq(PolicyGenerator.generatePolicy());
+		/*Uaq UaqEngine = new Uaq(PolicyGenerator.generatePolicy());
 		
 		for (Request request : RequestGenerator.generateRequests())
 			UaqEngine.makeRequest(request);
+			*/
+		
+		System.out.println("Hello, world!");
 	}
 
 }

@@ -3,24 +3,43 @@ package edu.psu.msu5001.rbac;
 import java.util.*;
 
 public class Role {
+	private final int id;
 	private String roleName;
 	private HashSet<Role> roleChildren;
 	private HashSet<Role> roleParents;
 	private HashSet<Permission> rolePermissions;
+	private Policy policy;
 	
-	public Role (String roleName) {
-		this(roleName,new HashSet<Permission>());
+	public Role (Policy policy, String roleName) {
+		this(policy,roleName,new HashSet<Permission>());
 	}
 	
-	public Role (String roleName, HashSet<Permission> rolePermissions) {
-		this(roleName,rolePermissions,new HashSet<Role>(),new HashSet<Role>());
+	public Role (Policy policy, String roleName, HashSet<Permission> rolePermissions) {
+		this(policy,roleName,rolePermissions,new HashSet<Role>(),new HashSet<Role>());
 	}
 	
-	public Role (String roleName, HashSet<Permission> rolePermissions, HashSet<Role> roleChildren, HashSet<Role> roleParents) {
+	public Role (Policy policy, String roleName, HashSet<Permission> rolePermissions, HashSet<Role> roleChildren, HashSet<Role> roleParents) {
 		setRoleName(roleName);
 		setRolePermissions(rolePermissions);
 		setRoleChildren(roleChildren);
 		setRoleParents(roleParents);
+		setPolicy(policy);
+		id = policy.getUniqueRoleId();
+		policy.addRole(this);
+	}
+	
+	/**
+	 * @return the policy
+	 */
+	public Policy getPolicy() {
+		return policy;
+	}
+
+	/**
+	 * @param policy the policy to set
+	 */
+	public void setPolicy(Policy policy) {
+		this.policy = policy;
 	}
 	
 	/**
@@ -48,6 +67,8 @@ public class Role {
 	 * @param rolePermissions the rolePermissions to set
 	 */
 	public void setRolePermissions(HashSet<Permission> rolePermissions) {
+		for (Permission permission : this.rolePermissions) permission.removeRole(this);
+		for (Permission permission : rolePermissions) permission.addRole(this);
 		this.rolePermissions = rolePermissions;
 	}
 	
@@ -111,18 +132,26 @@ public class Role {
 	}
 	
 	public boolean addPermission(Permission permission) {
+		permission.addRole(this);
 		return rolePermissions.add(permission);
 	}
 	public boolean addPermissions(HashSet<Permission> permissions) {
+		for (Permission permission : permissions) permission.addRole(this);
 		return rolePermissions.addAll(permissions);
 	}
 	
-	public boolean removePermission(Role permission) {
+	public boolean removePermission(Permission permission) {
+		permission.removeRole(this);
 		return rolePermissions.remove(permission);
 	}
 	
 	public boolean removePermissions(HashSet<Permission> permissions) {
+		for (Permission permission : permissions) permission.removeRole(this);
 		return rolePermissions.removeAll(permissions);
+	}
+
+	public int getId() {
+		return id;
 	}
 
 }

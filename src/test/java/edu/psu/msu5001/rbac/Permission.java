@@ -1,7 +1,10 @@
 package edu.psu.msu5001.rbac;
 
+import java.util.HashSet;
+
 public class Permission {
 	private String permissionName;
+	private HashSet<Role> roles;
 
 	public Permission(String permissionName) {
 		setPermissionName(permissionName);
@@ -19,5 +22,35 @@ public class Permission {
 	 */
 	public void setPermissionName(String permissionName) {
 		this.permissionName = permissionName;
+	}
+	
+	public HashSet<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(HashSet<Role> roles) {
+		for (Role role : this.roles) role.removePermission(this);
+		for (Role role : roles) role.addPermission(this);
+		this.roles = roles;
+	}
+	
+	public void addRoles(HashSet<Role> roles) {
+		for (Role role : roles) role.addPermission(this);
+		this.roles.addAll(roles);
+	}
+	
+	public void removeRoles(HashSet<Role> roles) {
+		for (Role role : roles) role.removePermission(this);
+		this.roles.removeAll(roles);
+	}
+	
+	public void addRole(Role role) {
+		role.addPermission(this);
+		this.roles.add(role);
+	}
+	
+	public void removeRole(Role role) {
+		role.removePermission(this);
+		this.roles.remove(role);
 	}
 }
