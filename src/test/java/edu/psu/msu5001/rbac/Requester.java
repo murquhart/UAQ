@@ -3,11 +3,12 @@ package edu.psu.msu5001.rbac;
 import java.util.HashSet;
 
 public class Requester {
-	//private final int id;
+	private final int id;
 	private String name;
 	private HashSet<Role> roles;
 	
-	public Requester(String name, HashSet<Role> roles) {
+	public Requester(int id, String name, HashSet<Role> roles) {
+		this.id=id;
 		setName(name);
 		setRoles(roles);
 	}
@@ -42,5 +43,9 @@ public class Requester {
 	
 	public void removeRole(Role role) {
 		this.roles.remove(role);
+	}
+
+	public int getId() {
+		return id;
 	}
 }

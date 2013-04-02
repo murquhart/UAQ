@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 public class Permission {
 	private String permissionName;
-	private HashSet<Role> roles;
+	private HashSet<Role> roles = new HashSet<Role>();
 
 	public Permission(String permissionName) {
 		setPermissionName(permissionName);
@@ -45,7 +45,7 @@ public class Permission {
 	}
 	
 	public void addRole(Role role) {
-		role.addPermission(this);
+		if (!role.getRolePermissions().contains(this)) role.addPermission(this);
 		this.roles.add(role);
 	}
 	

@@ -5,10 +5,10 @@ import java.util.*;
 public class Role {
 	private final int id;
 	private String roleName;
-	private HashSet<Role> roleChildren;
-	private HashSet<Role> roleParents;
-	private HashSet<Permission> rolePermissions;
-	private Policy policy;
+	private HashSet<Role> roleChildren=null;
+	private HashSet<Role> roleParents=null;
+	private HashSet<Permission> rolePermissions=null;
+	private Policy policy=null;
 	
 	public Role (Policy policy, String roleName) {
 		this(policy,roleName,new HashSet<Permission>());
@@ -67,9 +67,10 @@ public class Role {
 	 * @param rolePermissions the rolePermissions to set
 	 */
 	public void setRolePermissions(HashSet<Permission> rolePermissions) {
-		for (Permission permission : this.rolePermissions) permission.removeRole(this);
-		for (Permission permission : rolePermissions) permission.addRole(this);
+		
+		if (this.rolePermissions != null) for (Permission permission : this.rolePermissions) permission.removeRole(this);
 		this.rolePermissions = rolePermissions;
+		for (Permission permission : rolePermissions) permission.addRole(this);
 	}
 	
 	/**
@@ -132,7 +133,7 @@ public class Role {
 	}
 	
 	public boolean addPermission(Permission permission) {
-		permission.addRole(this);
+		if (!permission.getRoles().contains(this)) permission.addRole(this);
 		return rolePermissions.add(permission);
 	}
 	public boolean addPermissions(HashSet<Permission> permissions) {

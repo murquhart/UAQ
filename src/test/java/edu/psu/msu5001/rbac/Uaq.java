@@ -27,7 +27,7 @@ public class Uaq {
 	}
 	
 	public static Uaq getInstance(Policy policy) {
-		if (policy==null) uaq = new Uaq(policy);
+		if (uaq==null) uaq = new Uaq(policy);
 		return uaq;
 	}
 
@@ -39,7 +39,7 @@ public class Uaq {
 		this.policy = policy;
 	}
 	
-	public int doRequest(Request request, Requester requester) {
+	public int[] doRequest(Request request, Requester requester) {
 		
 		HashSet<Permission> permissions = request.getPermissons();
 		int numClauses = permissions.size();
@@ -57,6 +57,7 @@ public class Uaq {
 			int i = 0;
 			for (Role role : roles) {
 				cnf[i] = role.getId();
+				//System.out.println(cnf[i]);
 				i++;
 			}
 			try {
@@ -64,21 +65,21 @@ public class Uaq {
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
-			
-			IProblem problem = solver;
-			try {
-				if (problem.isSatisfiable()) {
-					//do something here
-					//problem.model();
-
-				}
-			} catch (TimeoutException e) {
-				e.printStackTrace();
-			}
-			
 		}
+			
+		IProblem problem = solver;
+		try {
+			if (problem.isSatisfiable()) {
+				//do something here
+				return problem.model();
+
+			}
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
+			
 		 
-		return 0;
+		return null;
 	}
 
 }
