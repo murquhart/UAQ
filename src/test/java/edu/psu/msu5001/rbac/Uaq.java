@@ -66,6 +66,26 @@ public class Uaq {
 				e.printStackTrace();
 			}
 		}
+		
+		/* Generate SoD clauses */
+		HashSet<Sod> sodSet = policy.getSodSet();
+		for (Sod sod : sodSet) {
+			int t = sod.get_t();
+			HashSet<Role> sodRoles = sod.getRoles();
+			for (Role role : sodRoles) {
+				int [] cnf = new int[t];
+				for (int i = 0; i < t; i++) {
+					
+				}
+				sodRoles.remove(role);
+			}
+			
+			try {
+				solver.addClause(new VecInt(cnf));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+		}
 			
 		IProblem problem = solver;
 		try {

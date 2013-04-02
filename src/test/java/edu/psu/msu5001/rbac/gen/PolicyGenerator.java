@@ -8,7 +8,7 @@ import edu.psu.msu5001.rbac.*;
 
 public class PolicyGenerator {
 	
-	public static Policy randomPolicy(int numRoles, int roleDepth, int numPermissions) {
+	public static Policy randomPolicy(int numRoles, int roleDepth, int numPermissions, int maxPermPerRole) {
 		
 		Hashtable<Integer, Permission> permissions = new Hashtable<Integer, Permission>();
 		for (int i=0; i < numPermissions; i++) {
@@ -22,7 +22,7 @@ public class PolicyGenerator {
 		
 		for (int i=1; i <= numRoles; i++) {
 			HashSet<Permission> randPermissions = new HashSet<Permission>();
-			for (int j=0; j < r.nextInt(numPermissions/10)+1; j++) {
+			for (int j=0; j < r.nextInt(maxPermPerRole)+1; j++) {
 				randPermissions.add(permissions.get(r.nextInt(numPermissions)));
 			}
 			

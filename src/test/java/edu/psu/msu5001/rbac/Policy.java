@@ -2,6 +2,7 @@ package edu.psu.msu5001.rbac;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -36,6 +37,13 @@ public class Policy {
 		if (policy == null) policy = new Policy(roleTable, sodSet);
 		return policy;
 	}*/
+	
+	public ArrayList<Permission> getPermissions() {
+		ArrayList<Permission> permissions = new ArrayList<Permission>();
+		for (Role role : roleTable.values()) 
+			permissions.addAll(role.getRolePermissions());
+		return permissions;
+	}
 	
 	public Hashtable<Integer, Role> getRoleTable() {
 		return roleTable;
@@ -153,7 +161,7 @@ public class Policy {
 	}
 	
 	
-	private Element createRoleElement(Role role, Document dom) {
+	private static Element createRoleElement(Role role, Document dom) {
 		
 		Element roleEle = dom.createElement("Role");
 		roleEle.setAttribute("id", Integer.toString(role.getId()));

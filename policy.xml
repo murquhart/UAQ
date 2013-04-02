@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Policy>
+   <Role Name="Role_20" id="20">
+      <permission>permission_19</permission>
+      <permission>permission_5</permission>
+      <permission>permission_16</permission>
+      <permission>permission_3</permission>
+      <permission>permission_14</permission>
+   </Role>
+   <Role Name="Role_19" id="19">
+      <permission>permission_0</permission>
+      <permission>permission_6</permission>
+   </Role>
+   <Role Name="Role_18" id="18">
+      <permission>permission_13</permission>
+      <permission>permission_15</permission>
+      <permission>permission_4</permission>
+      <permission>permission_10</permission>
+   </Role>
+   <Role Name="Role_17" id="17">
+      <permission>permission_17</permission>
+      <permission>permission_15</permission>
+      <permission>permission_4</permission>
+      <permission>permission_11</permission>
+   </Role>
+   <Role Name="Role_16" id="16">
+      <permission>permission_13</permission>
+      <permission>permission_1</permission>
+   </Role>
+   <Role Name="Role_15" id="15">
+      <permission>permission_16</permission>
+      <permission>permission_14</permission>
+   </Role>
+   <Role Name="Role_14" id="14">
+      <permission>permission_3</permission>
+   </Role>
+   <Role Name="Role_13" id="13">
+      <permission>permission_14</permission>
+   </Role>
+   <Role Name="Role_12" id="12">
+      <permission>permission_15</permission>
+      <permission>permission_7</permission>
+      <permission>permission_1</permission>
+      <permission>permission_4</permission>
+   </Role>
+   <Role Name="Role_11" id="11">
+      <permission>permission_1</permission>
+      <permission>permission_10</permission>
+   </Role>
+   <Role Name="Role_10" id="10">
+      <permission>permission_17</permission>
+      <permission>permission_9</permission>
+      <permission>permission_19</permission>
+      <permission>permission_15</permission>
+      <permission>permission_10</permission>
+   </Role>
+   <Role Name="Role_9" id="9">
+      <permission>permission_19</permission>
+      <permission>permission_5</permission>
+      <permission>permission_1</permission>
+   </Role>
+   <Role Name="Role_8" id="8">
+      <permission>permission_9</permission>
+      <permission>permission_15</permission>
+      <permission>permission_0</permission>
+      <permission>permission_10</permission>
+      <permission>permission_11</permission>
+      <permission>permission_2</permission>
+   </Role>
+   <Role Name="Role_7" id="7">
+      <permission>permission_0</permission>
+   </Role>
+   <Role Name="Role_6" id="6">
+      <permission>permission_5</permission>
+      <permission>permission_12</permission>
+      <permission>permission_14</permission>
+   </Role>
+   <Role Name="Role_5" id="5">
+      <permission>permission_16</permission>
+      <permission>permission_7</permission>
+      <permission>permission_6</permission>
+   </Role>
+   <Role Name="Role_4" id="4">
+      <permission>permission_6</permission>
+   </Role>
+   <Role Name="Role_3" id="3">
+      <permission>permission_16</permission>
+      <permission>permission_7</permission>
+   </Role>
+   <Role Name="Role_2" id="2">
+      <permission>permission_17</permission>
+   </Role>
+   <Role Name="Role_1" id="1">
+      <permission>permission_17</permission>
+      <permission>permission_0</permission>
+      <permission>permission_5</permission>
+      <permission>permission_7</permission>
+      <permission>permission_3</permission>
+   </Role>
+</Policy>
