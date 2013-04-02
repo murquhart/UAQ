@@ -1,6 +1,6 @@
 package edu.psu.msu5001.rbac;
 
-import java.util.HashSet;
+import java.util.*;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
@@ -72,19 +72,23 @@ public class Uaq {
 		for (Sod sod : sodSet) {
 			int t = sod.get_t();
 			HashSet<Role> sodRoles = sod.getRoles();
-			for (Role role : sodRoles) {
-				int [] cnf = new int[t];
-				for (int i = 0; i < t; i++) {
-					
+			Set<Set<Role>> roleSets = enumerateSubsets(sodRoles, t); 
+			
+			for (Set<Role> roleSet : roleSets) {
+				int[] cnf = new int[t];
+				int i = 0;
+				for (Role role : roleSet) {
+					cnf[i] = -role.getId();
+					i++;
 				}
-				sodRoles.remove(role);
+				try {
+					solver.addClause(new VecInt(cnf));
+				} catch (ContradictionException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			try {
-				solver.addClause(new VecInt(cnf));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
+			
 		}
 			
 		IProblem problem = solver;
@@ -100,6 +104,30 @@ public class Uaq {
 			
 		 
 		return null;
+	}
+	
+	private <E> Set<Set<E>> addElementToSubsets(E e, Set<Set<E>> set) {
+		for (Set<E> subset : set) subset.add(e);
+		return set;
+	}
+	
+	private <E> Set<Set<E>> enumerateSubsets(Set<E> set, int subsetSize) {
+		Set<Set<E>> sets = new HashSet<Set<E>>(); 
+		
+		if (subsetSize == 1)
+			for (E e : set) {
+				Set<E> tmp = new HashSet<E>();
+				tmp.add(e);
+				sets.add(tmp);
+			}
+		
+		else
+			for(E e : set) {
+				set.remove(e);
+				sets.addAll(addElementToSubsets(e, enumerateSubsets(set, subsetSize-1)));
+			}
+		
+		return sets;
 	}
 
 }
