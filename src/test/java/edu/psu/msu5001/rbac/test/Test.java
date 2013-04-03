@@ -13,10 +13,30 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
+		 * Config for PolicyGenerator.randomPolicy
+		 */
+		int numRoles = 20;
+		int roleDepth = 0;
+		int numPermissions = 20;
+		int maxPermPerRole = 8;
+		
+		/*
+		 * Config for PolicyGenerator.randomSodSet
+		 */
+		int numSod = 20;
+		int maxRoles = 3;
+		
+		/*
+		 * Config for RequestGenerator.generateRequests
+		 */
+		int numRequests = 10;
+		int maxRequestSize = 6;
+		int minRequestSize = 2;
 		
 		System.out.print("Please wait while we build you a policy...");
-		Policy policy = PolicyGenerator.randomPolicy(20, 0, 20, 8);
-		HashSet<Sod> randomSodSet = PolicyGenerator.randomSodSet(20, 3, policy);
+		Policy policy = PolicyGenerator.randomPolicy(numRoles, roleDepth, numPermissions, maxPermPerRole);
+		HashSet<Sod> randomSodSet = PolicyGenerator.randomSodSet(numSod, maxRoles, policy);
 		policy.setSodSet(randomSodSet);
 		
 		policy.toXml("policy.xml");
@@ -35,7 +55,7 @@ public class Test {
 		 */
 		Requester requester = new Requester(1,"Test User", roles);
 		//Request request = new Request(policy.getRoleTable().get(1).getRolePermissions());
-		HashSet<Request> requests = RequestGenerator.generateRequests(10, policy, 6, 2);
+		HashSet<Request> requests = RequestGenerator.generateRequests(numRequests, policy, maxRequestSize, minRequestSize);
 		
 		for (Request request : requests) {
 			System.out.println(requester.getName() + " issuing request for permissions: ");

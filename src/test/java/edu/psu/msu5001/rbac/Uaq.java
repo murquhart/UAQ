@@ -104,6 +104,11 @@ public class Uaq {
 				return problem.model();
 
 			}
+			
+			else {
+				int [] notSat = {0};
+				return notSat;
+			}
 		} catch (TimeoutException e) {
 			e.printStackTrace();
 		}
