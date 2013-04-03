@@ -16,6 +16,9 @@ public class Test {
 		
 		System.out.print("Please wait while we build you a policy...");
 		Policy policy = PolicyGenerator.randomPolicy(20, 0, 20, 8);
+		HashSet<Sod> randomSodSet = PolicyGenerator.randomSodSet(20, 3, policy);
+		policy.setSodSet(randomSodSet);
+		
 		policy.toXml("policy.xml");
 		System.out.println("done.");
 		
@@ -40,8 +43,11 @@ public class Test {
 			
 			long elapsedTime = System.nanoTime();
 			int [] model = uaqEngine.doRequest(request, requester);
+			System.out.print("\nmodel: ");
+			for(int i=0; i < model.length; i++) System.out.print(model[i] + " ");
+			System.out.println();
 			System.out.println("\nUAQ activated roles: ");
-			for(int i : model) if (i > 0) System.out.println("role_" + i);
+			for(int i : model) if (i > 0) System.out.println(policy.getRoleTable().get(i).getRoleName());
 			elapsedTime = System.nanoTime() - elapsedTime;
 			System.out.println("\nUAQ took: "+ elapsedTime/1000000000.0 + " seconds");
 		}

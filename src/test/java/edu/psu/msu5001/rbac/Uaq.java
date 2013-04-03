@@ -49,6 +49,9 @@ public class Uaq {
 		solver.newVar(maxVar);
 		solver.setExpectedNumberOfClauses(numClauses);
 		
+		
+		System.out.println("\ncnf: ");
+		
 		/* Generate RBAC clauses */
 		for (Permission permission : permissions) {
 			HashSet<Role> roles = permission.getRoles();
@@ -57,9 +60,10 @@ public class Uaq {
 			int i = 0;
 			for (Role role : roles) {
 				cnf[i] = role.getId();
-				//System.out.println(cnf[i]);
+				System.out.print(cnf[i] + " ");
 				i++;
 			}
+			System.out.println();
 			try {
 				solver.addClause(new VecInt(cnf));
 			} catch (ContradictionException e) {
@@ -79,17 +83,19 @@ public class Uaq {
 				int i = 0;
 				for (Role role : roleSet) {
 					cnf[i] = -role.getId();
+					System.out.print(cnf[i] + " ");
 					i++;
 				}
+				System.out.println();
 				try {
 					solver.addClause(new VecInt(cnf));
 				} catch (ContradictionException e) {
 					e.printStackTrace();
 				}
 			}
-			
-			
 		}
+		
+		System.out.println();
 			
 		IProblem problem = solver;
 		try {
@@ -121,11 +127,15 @@ public class Uaq {
 				sets.add(tmp);
 			}
 		
-		else
+		else {
+			
 			for(E e : set) {
-				set.remove(e);
-				sets.addAll(addElementToSubsets(e, enumerateSubsets(set, subsetSize-1)));
+				Set<E> subset = new HashSet<E>();
+				subset.addAll(set);
+				subset.remove(e);
+				sets.addAll(addElementToSubsets(e, enumerateSubsets(subset, subsetSize-1)));
 			}
+		}
 		
 		return sets;
 	}

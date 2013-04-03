@@ -125,6 +125,10 @@ public class Policy {
 			rootEle.appendChild(createRoleElement(role, dom));
 		}
 		
+		for (Sod sod : sodSet) {
+			rootEle.appendChild(createSodElement(sod, dom));
+		}
+		
 		Transformer tr = null;
 		try {
 			tr = TransformerFactory.newInstance().newTransformer();
@@ -160,6 +164,19 @@ public class Policy {
 		}*/
 	}
 	
+	private static Element createSodElement(Sod sod, Document dom) {
+		
+		Element sodEle = dom.createElement("sod");
+		sodEle.setAttribute("t", Integer.toString(sod.get_t()));
+		for (Role role : sod.getRoles()) {
+			Element roleEle = dom.createElement("role");
+			roleEle.setAttribute("id", Integer.toString(role.getId()));
+			roleEle.appendChild(dom.createTextNode(role.getRoleName()));
+			sodEle.appendChild(roleEle);
+		}
+		
+		return sodEle;
+	}
 	
 	private static Element createRoleElement(Role role, Document dom) {
 		
