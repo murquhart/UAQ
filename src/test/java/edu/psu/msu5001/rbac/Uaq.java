@@ -1,24 +1,30 @@
 package edu.psu.msu5001.rbac;
 
+import java.io.Reader;
 import java.util.*;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
+import org.sat4j.reader.InstanceReader;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IProblem;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
+import org.sat4j.tools.ModelIterator;
 
 public class Uaq {
 	
 	private static Uaq uaq = null;
 	private Policy policy;
+	private HashSet<int []> sodClauses = new HashSet<int []>();
 	
 	private Uaq() {
 		
 	}
 	private Uaq(Policy policy) {
 		setPolicy(policy);
+		getSodClauses();
+		
 	}
 	
 	public static Uaq getInstance() {
@@ -39,13 +45,36 @@ public class Uaq {
 		this.policy = policy;
 	}
 	
+	private HashSet<int []> getSodClauses() {
+		
+		/* Generate SoD clauses */
+		HashSet<Sod> sodSet = policy.getSodSet();
+		for (Sod sod : sodSet) {
+			int t = sod.get_t();
+			HashSet<Role> sodRoles = sod.getRoles();
+			Set<Set<Role>> roleSets = enumerateSubsets(sodRoles, t); 
+			
+			for (Set<Role> roleSet : roleSets) {
+				int[] cnf = new int[roleSet.size()];
+				int i = 0;
+				for (Role role : roleSet) {
+					cnf[i] = -role.getId();
+					i++;
+				}
+				sodClauses.add(cnf);
+			}
+		}
+		
+		return sodClauses;
+	}
+	
 	public int[] doRequest(Request request, Requester requester) {
 		
 		HashSet<Permission> permissions = request.getPermissons();
 		int numClauses = permissions.size();
 		int maxVar = policy.getRoleTable().size();
 		
-		ISolver solver = SolverFactory.newDefault();
+		ISolver solver = new ModelIterator(SolverFactory.newDefault());
 		solver.newVar(maxVar);
 		solver.setExpectedNumberOfClauses(numClauses);
 		
@@ -72,43 +101,46 @@ public class Uaq {
 		}
 		
 		/* Generate SoD clauses */
-		HashSet<Sod> sodSet = policy.getSodSet();
-		for (Sod sod : sodSet) {
-			int t = sod.get_t();
-			HashSet<Role> sodRoles = sod.getRoles();
-			Set<Set<Role>> roleSets = enumerateSubsets(sodRoles, t); 
-			
-			for (Set<Role> roleSet : roleSets) {
-				int[] cnf = new int[t];
-				int i = 0;
-				for (Role role : roleSet) {
-					cnf[i] = -role.getId();
-					System.out.print(cnf[i] + " ");
-					i++;
-				}
+		
+		for (int [] cnf : sodClauses) {
+			try {
+				solver.addClause(new VecInt(cnf));
+				for (int i = 0; i < cnf.length; i++) System.out.print(cnf[i] + " ");
 				System.out.println();
-				try {
-					solver.addClause(new VecInt(cnf));
-				} catch (ContradictionException e) {
-					e.printStackTrace();
-				}
+			} catch (ContradictionException e) {
 			}
 		}
 		
 		System.out.println();
-			
+		
 		IProblem problem = solver;
+		int [] model = {0};
 		try {
-			if (problem.isSatisfiable()) {
-				//do something here
-				return problem.model();
-
+			int modelPermSize = -1;
+			
+			while (problem.isSatisfiable()) {
+				int [] bufModel = problem.model();
+				
+				HashSet<Permission> permissionsActivated = new HashSet<Permission>();
+				for(int i : bufModel) { 
+					if (i > 0) {
+						Role bufRole = policy.getRoleTable().get(i);
+						permissionsActivated.addAll(bufRole.getRolePermissions());
+					}
+				}
+				
+				int bufPermSize = permissionsActivated.size();
+				
+				
+				if (modelPermSize == -1 || bufPermSize < modelPermSize) {
+					
+					model = bufModel;
+					modelPermSize = bufPermSize;
+				}	
 			}
 			
-			else {
-				int [] notSat = {0};
-				return notSat;
-			}
+			return model;
+			
 		} catch (TimeoutException e) {
 			e.printStackTrace();
 		}

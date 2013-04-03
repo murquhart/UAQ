@@ -17,6 +17,7 @@ public class Policy {
 	
 	private static Policy policy = null;
 	private Hashtable<Integer, Role> roleTable = new Hashtable<Integer, Role>();
+	//private Hashtable<Integer, Permission> permissionTable = new Hashtable<Integer, Permission>();
 	private HashSet<Sod> sodSet = new HashSet<Sod>();
 	
 	private Policy() {

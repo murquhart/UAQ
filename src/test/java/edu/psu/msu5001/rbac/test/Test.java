@@ -16,22 +16,22 @@ public class Test {
 		/*
 		 * Config for PolicyGenerator.randomPolicy
 		 */
-		int numRoles = 20;
+		int numRoles = 30;
 		int roleDepth = 0;
-		int numPermissions = 20;
-		int maxPermPerRole = 8;
+		int numPermissions = 200;
+		int maxPermPerRole = 10;
 		
 		/*
 		 * Config for PolicyGenerator.randomSodSet
 		 */
-		int numSod = 20;
-		int maxRoles = 3;
+		int numSod = 15;
+		int maxRoles = 2;
 		
 		/*
 		 * Config for RequestGenerator.generateRequests
 		 */
 		int numRequests = 10;
-		int maxRequestSize = 6;
+		int maxRequestSize = 15;
 		int minRequestSize = 2;
 		
 		System.out.print("Please wait while we build you a policy...");
@@ -63,11 +63,21 @@ public class Test {
 			
 			long elapsedTime = System.nanoTime();
 			int [] model = uaqEngine.doRequest(request, requester);
-			System.out.print("\nmodel: ");
+			System.out.print("model: ");
 			for(int i=0; i < model.length; i++) System.out.print(model[i] + " ");
 			System.out.println();
 			System.out.println("\nUAQ activated roles: ");
-			for(int i : model) if (i > 0) System.out.println(policy.getRoleTable().get(i).getRoleName());
+			HashSet<Permission> permissionsActivated = new HashSet<Permission>();
+			for(int i : model) { 
+				if (i > 0) {
+					Role bufRole = policy.getRoleTable().get(i);
+					System.out.println(bufRole.getRoleName());
+					permissionsActivated.addAll(bufRole.getRolePermissions());
+				}
+			}
+				
+			System.out.print("\nTotal permissions activated: " + permissionsActivated.size());
+			//for (Permission permission : permissionsActivated) System.out.print(permission.getPermissionName() + " ");
 			elapsedTime = System.nanoTime() - elapsedTime;
 			System.out.println("\nUAQ took: "+ elapsedTime/1000000000.0 + " seconds");
 		}
