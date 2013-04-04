@@ -1,7 +1,6 @@
 package edu.psu.msu5001.rbac.test;
 
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.*;
 
 import edu.psu.msu5001.rbac.*;
 import edu.psu.msu5001.rbac.gen.PolicyGenerator;
@@ -16,16 +15,16 @@ public class Test {
 		/*
 		 * Config for PolicyGenerator.randomPolicy
 		 */
-		int numRoles = 30;
+		int numRoles = 50;
 		int roleDepth = 0;
 		int numPermissions = 200;
-		int maxPermPerRole = 10;
+		int maxPermPerRole = 20;
 		
 		/*
 		 * Config for PolicyGenerator.randomSodSet
 		 */
-		int numSod = 15;
-		int maxRoles = 2;
+		int numSod = 10;
+		int maxRoles = 5;
 		
 		/*
 		 * Config for RequestGenerator.generateRequests
@@ -62,10 +61,26 @@ public class Test {
 			for (Permission permission : request.getPermissons()) System.out.println(permission.getPermissionName());
 			
 			long elapsedTime = System.nanoTime();
-			int [] model = uaqEngine.doRequest(request, requester);
+			int [] model = uaqEngine.doRequest(request, requester, -1, 0);
+			Collection<int []> rbacClauses = uaqEngine.getRbacClauses();
+			HashSet<int []> sodClauses = uaqEngine.getSodClauses();
+			
+			System.out.println("rbac clauses:");
+			for (int [] rbacClause : rbacClauses) {
+				for(int i=0; i < rbacClause.length; i++) System.out.print(rbacClause[i] + " ");
+				System.out.println();
+			}
+			
+			System.out.println("sod clauses:");
+			for (int [] sodClause : sodClauses) {
+				for(int i=0; i < sodClause.length; i++) System.out.print(sodClause[i] + " ");
+				System.out.println();
+			}
+			
 			System.out.print("model: ");
 			for(int i=0; i < model.length; i++) System.out.print(model[i] + " ");
 			System.out.println();
+			
 			System.out.println("\nUAQ activated roles: ");
 			HashSet<Permission> permissionsActivated = new HashSet<Permission>();
 			for(int i : model) { 

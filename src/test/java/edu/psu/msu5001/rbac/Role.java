@@ -142,8 +142,9 @@ public class Role {
 	}
 	
 	public boolean removePermission(Permission permission) {
-		permission.removeRole(this);
-		return rolePermissions.remove(permission);
+		boolean t = rolePermissions.remove(permission);
+		if (permission.getRoles().contains(this)) permission.removeRole(this);
+		return t;
 	}
 	
 	public boolean removePermissions(HashSet<Permission> permissions) {

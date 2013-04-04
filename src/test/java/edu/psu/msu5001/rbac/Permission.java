@@ -50,7 +50,7 @@ public class Permission {
 	}
 	
 	public void removeRole(Role role) {
-		role.removePermission(this);
-		this.roles.remove(role);
+		roles.remove(role);
+		if (role.getRolePermissions().contains(this)) role.removePermission(this);
 	}
 }
