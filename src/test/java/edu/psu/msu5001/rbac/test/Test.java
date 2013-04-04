@@ -106,23 +106,23 @@ public class Test {
 		/*
 		 * Config for PolicyGenerator.randomPolicy
 		 */
-		int numRoles = 400;
+		int numRoles = 1000;
 		int roleDepth = 0;
-		int numPermissions = 200;
+		int numPermissions = 4000;
 		int maxPermPerRole = 20;
 		
 		/*
 		 * Config for PolicyGenerator.randomSodSet
 		 */
-		int numSod = 25;
-		int maxRoles = 6;
+		int numSod = 50;
+		int maxRoles = 10;
 		
 		/*
 		 * Config for RequestGenerator.generateRequests
 		 */
-		int numRequests = 100;
-		int maxRequestSize = 30;
-		int minRequestSize = 2;
+		int numRequests = 1000;
+		int maxRequestSize = 50;
+		int minRequestSize = 4;
 		
 		int request_id = 0;
 		
@@ -144,7 +144,7 @@ public class Test {
 		
 		System.out.print("Creating UAQ engine...");
 		Uaq uaqEngine = Uaq.getInstance(policy);
-		System.out.println("done.\n");
+		System.out.println("done.");
 		
 		
 		HashSet<Role> roles = new HashSet<Role>();
@@ -158,12 +158,25 @@ public class Test {
 		
 		HashSet<Request> requests = null;
 		
+		System.out.print("Building requests...");
 		if (useRequestsFile) {
 			requests = loadRequests(requestsInputFile, policy);
 		}
 		else {
 			requests = RequestGenerator.generateRequests(numRequests, policy, maxRequestSize, minRequestSize);
 			writeRequests(requests, requestsOutputFile);
+		}
+		System.out.println("done.\n");
+		
+		FileOutputStream fop = null;
+		PrintStream print = null;
+		
+		try {
+			fop = new FileOutputStream(metricsFile, true);
+			print = new PrintStream(fop);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		for (Request request : requests) {
@@ -219,40 +232,38 @@ public class Test {
 			}
 			
 			System.out.println();
+			
+			print.print(numRoles + ",");
+			
 			System.out.println("Request_" + request_id++);
+			
+			print.print(requestSize + ",");
 			System.out.println("Total permissions requested: " + requestSize);
+			
+			print.print(permissionsActivated.size() + ",");
 			System.out.println("Total permissions activated: " + permissionsActivated.size());
+			
+			print.print(numClauses + ",");
 			System.out.println("Total cnf clauses: " + numClauses);
+			
+			print.print(numSod + ",");
+			print.print(maxRoles + ",");
+			
+			print.print(avgConstPerClause + ",");
 			System.out.println("Average roles per clause: " + avgConstPerClause);
 			//for (Permission permission : permissionsActivated) System.out.print(permission.getPermissionName() + " ");
+			
+			print.println(elapsedTime/1000000000.0);
 			System.out.println("UAQ took: "+ elapsedTime/1000000000.0 + " seconds");
 		}
-	}
-	
-	private static void recordResultsToFile(File file) {
-		/*FileOutputStream fop = null;
-		PrintStream print = null;
+		
+		print.flush();
+		print.close();
 		try {
-			fop = new FileOutputStream(file);
-			print = new PrintStream(fop);
-		} catch (FileNotFoundException e) {
+			fop.close();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		boolean first = true;
-		for (Request request : requests) {
-			if (first) {
-				print.println("<request>");
-				first = false;
-			}
-			else print.println("\n<request>");
-			for (Permission permission : request.getPermissions()) {
-				print.println(permission.getPermissionName());
-			}
-			print.print("</request>");
-			print.flush();
-		}
-		*/
-		}
+	}
 }
