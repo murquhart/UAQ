@@ -27,6 +27,7 @@ public class Uaq {
 	public static final int MAXIMIZE_ROLES = 1;
 	public static final int ANY_ROLES = 0;
 	private int [] model;
+	private HashSet<int []> allRbacClauseMap= null;
 	
 
 	private Uaq() {
@@ -49,6 +50,10 @@ public class Uaq {
 
 	public Collection<int []> getRbacClauses() {
 		return rbacClauseMap.values();
+	}
+	
+	public Collection<int []> getAllRbacClauses() {
+		return allRbacClauseMap;
 	}
 	
 	public HashSet<int []> getSodClauses() {
@@ -224,6 +229,7 @@ public class Uaq {
 	private boolean generateRbacClauses(Request request, Requester requester) {
 		HashSet<Permission> permissions = request.getPermissions();
 		HashMap<Permission, int []> clauseMap = new HashMap<Permission, int []>();
+		allRbacClauseMap= new HashSet<int []>();
 		validRoleIds = new HashSet<Integer>();
 		
 		for (Permission permission : permissions) {
@@ -249,6 +255,7 @@ public class Uaq {
 			clauseMap.put(permission, clause);
 		}
 		rbacClauseMap = clauseMap;
+		allRbacClauseMap.addAll(clauseMap.values());
 		return true;
 	}
 	

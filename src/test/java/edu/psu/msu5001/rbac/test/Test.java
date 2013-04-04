@@ -99,6 +99,7 @@ public class Test {
 		String policyOutputXml = "policy.xml";
 		File requestsInputFile = new File("requests.txt");
 		File requestsOutputFile = new File("requests.txt");
+		File metricsFile = new File("results.csv");
 		boolean useRequestsFile = false;
 		
 		
@@ -107,8 +108,8 @@ public class Test {
 		 */
 		int numRoles = 400;
 		int roleDepth = 0;
-		int numPermissions = 2000;
-		int maxPermPerRole = 50;
+		int numPermissions = 200;
+		int maxPermPerRole = 20;
 		
 		/*
 		 * Config for PolicyGenerator.randomSodSet
@@ -122,6 +123,8 @@ public class Test {
 		int numRequests = 100;
 		int maxRequestSize = 30;
 		int minRequestSize = 2;
+		
+		int request_id = 0;
 		
 		System.out.print("Please wait while we build you a policy...");
 		
@@ -169,20 +172,37 @@ public class Test {
 			
 			long elapsedTime = System.nanoTime();
 			int [] model = uaqEngine.doRequest(request, requester, -1, 0);
-			Collection<int []> rbacClauses = uaqEngine.getRbacClauses();
+			elapsedTime = System.nanoTime() - elapsedTime;
+			Collection<int []> rbacClauses = uaqEngine.getAllRbacClauses();
 			HashSet<int []> sodClauses = uaqEngine.getSodClauses();
 			
-			//System.out.println("rbac clauses:");
-			//for (int [] rbacClause : rbacClauses) {
-			//	for(int i=0; i < rbacClause.length; i++) System.out.print(rbacClause[i] + " ");
-				//System.out.println();
-			//}
+			int numClauses = 0;
+			double avgConstPerClause = 0;
+			int requestSize = request.getPermissions().size();
 			
-			//System.out.println("sod clauses:");
-			//for (int [] sodClause : sodClauses) {
-			//	for(int i=0; i < sodClause.length; i++) System.out.print(sodClause[i] + " ");
-				//System.out.println();
-			//}
+			for (int [] rbacClause : rbacClauses) {
+				avgConstPerClause += rbacClause.length;
+				numClauses++;
+			}
+			
+			for (int [] sodClause : sodClauses) {
+				avgConstPerClause += sodClause.length;
+				numClauses++;
+			}
+			
+			avgConstPerClause = avgConstPerClause/numClauses;
+			
+			/*System.out.println("rbac clauses:");
+			for (int [] rbacClause : rbacClauses) {
+				for(int i=0; i < rbacClause.length; i++) System.out.print(rbacClause[i] + " ");
+				System.out.println();
+			}*/
+			
+			/*System.out.println("sod clauses:");
+			for (int [] sodClause : sodClauses) {
+				for(int i=0; i < sodClause.length; i++) System.out.print(sodClause[i] + " ");
+				System.out.println();
+			}*/
 			
 			//System.out.print("model: ");
 			//for(int i=0; i < model.length; i++) System.out.print(model[i] + " ");
@@ -197,12 +217,42 @@ public class Test {
 					permissionsActivated.addAll(bufRole.getRolePermissions());
 				}
 			}
-				
-			System.out.print("\nTotal permissions activated: " + permissionsActivated.size());
+			
+			System.out.println();
+			System.out.println("Request_" + request_id++);
+			System.out.println("Total permissions requested: " + requestSize);
+			System.out.println("Total permissions activated: " + permissionsActivated.size());
+			System.out.println("Total cnf clauses: " + numClauses);
+			System.out.println("Average roles per clause: " + avgConstPerClause);
 			//for (Permission permission : permissionsActivated) System.out.print(permission.getPermissionName() + " ");
-			elapsedTime = System.nanoTime() - elapsedTime;
-			System.out.println("\nUAQ took: "+ elapsedTime/1000000000.0 + " seconds");
+			System.out.println("UAQ took: "+ elapsedTime/1000000000.0 + " seconds");
 		}
 	}
-
+	
+	private static void recordResultsToFile(File file) {
+		/*FileOutputStream fop = null;
+		PrintStream print = null;
+		try {
+			fop = new FileOutputStream(file);
+			print = new PrintStream(fop);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		boolean first = true;
+		for (Request request : requests) {
+			if (first) {
+				print.println("<request>");
+				first = false;
+			}
+			else print.println("\n<request>");
+			for (Permission permission : request.getPermissions()) {
+				print.println(permission.getPermissionName());
+			}
+			print.print("</request>");
+			print.flush();
+		}
+		*/
+		}
 }
