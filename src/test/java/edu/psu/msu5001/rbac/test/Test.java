@@ -106,23 +106,51 @@ public class Test {
 		/*
 		 * Config for PolicyGenerator.randomPolicy
 		 */
-		int numRoles = 1000;
+		int numRoles = 10;
 		int roleDepth = 0;
-		int numPermissions = 4000;
-		int maxPermPerRole = 20;
+		int numPermissions = 5;
+		int maxPermPerRole = 3;
 		
 		/*
 		 * Config for PolicyGenerator.randomSodSet
 		 */
-		int numSod = 50;
-		int maxRoles = 10;
+		int numSod = 2;
+		int maxRoles = 2;
 		
 		/*
 		 * Config for RequestGenerator.generateRequests
 		 */
-		int numRequests = 1000;
-		int maxRequestSize = 50;
-		int minRequestSize = 4;
+		int numRequests = 5;
+		int maxRequestSize = 3;
+		int minRequestSize = 2;
+		
+		
+		Properties prop = new Properties();
+		 
+    	try {
+    		prop.load(new FileInputStream("config.properties"));
+    		
+    		usePolicyXml = !Boolean.parseBoolean(prop.getProperty("gen_policy"));
+    		useRequestsFile = !Boolean.parseBoolean(prop.getProperty("gen_requests"));
+    		policyInputXml = new File(prop.getProperty("policy_input_xml"));
+    		policyOutputXml = prop.getProperty("policy_output_xml");
+    		requestsInputFile = new File(prop.getProperty("requests_input_file"));
+    		requestsOutputFile = new File(prop.getProperty("requests_output_file"));
+    		metricsFile = new File(prop.getProperty("out_file"));
+    		numRoles = Integer.parseInt(prop.getProperty("numRoles"));
+    		numPermissions = Integer.parseInt(prop.getProperty("numPermissions"));
+    		maxPermPerRole = Integer.parseInt(prop.getProperty("maxPermPerRole"));
+    		numSod = Integer.parseInt(prop.getProperty("numSod"));
+    		maxRoles = Integer.parseInt(prop.getProperty("maxRoles"));
+    		numRequests = Integer.parseInt(prop.getProperty("numRequests"));
+    		maxRequestSize = Integer.parseInt(prop.getProperty("maxRequestSize"));
+    		minRequestSize = Integer.parseInt(prop.getProperty("minRequestSize")); 
+ 
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+        }
+		
+		
 		
 		int request_id = 0;
 		
