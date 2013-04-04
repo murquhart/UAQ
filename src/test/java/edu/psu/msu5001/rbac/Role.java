@@ -19,12 +19,16 @@ public class Role {
 	}
 	
 	public Role (Policy policy, String roleName, HashSet<Permission> rolePermissions, HashSet<Role> roleChildren, HashSet<Role> roleParents) {
+		this(policy.getUniqueRoleId(),policy,roleName,rolePermissions,new HashSet<Role>(),new HashSet<Role>());
+	}
+	
+	public Role (int id, Policy policy, String roleName, HashSet<Permission> rolePermissions, HashSet<Role> roleChildren, HashSet<Role> roleParents) {
 		setRoleName(roleName);
 		setRolePermissions(rolePermissions);
 		setRoleChildren(roleChildren);
 		setRoleParents(roleParents);
 		setPolicy(policy);
-		id = policy.getUniqueRoleId();
+		this.id = id;
 		policy.addRole(this);
 	}
 	

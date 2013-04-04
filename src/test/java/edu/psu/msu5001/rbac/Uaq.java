@@ -97,7 +97,7 @@ public class Uaq {
 			return nonSat;
 		}
 		
-		HashSet<Permission> permissions = request.getPermissons();
+		HashSet<Permission> permissions = request.getPermissions();
 		int numClauses = permissions.size();
 		int maxVar = policy.getRoleTable().size();
 		
@@ -222,7 +222,7 @@ public class Uaq {
 	
 
 	private boolean generateRbacClauses(Request request, Requester requester) {
-		HashSet<Permission> permissions = request.getPermissons();
+		HashSet<Permission> permissions = request.getPermissions();
 		HashMap<Permission, int []> clauseMap = new HashMap<Permission, int []>();
 		validRoleIds = new HashSet<Integer>();
 		
@@ -309,7 +309,7 @@ public class Uaq {
 	
 	private void minimizePermissions() {
 		
-		boolean unsatisfiable = true;
+		boolean unsatisfiable;
 		
 		Set<Permission> requestPermissions = rbacClauseMap.keySet();
 		
@@ -317,6 +317,7 @@ public class Uaq {
 		for (Permission permission : rbacClauseMap.keySet()) {
 			int [] cnf = rbacClauseMap.get(permission);
 			HashSet<Integer> cnfSet = new HashSet<Integer>();
+			unsatisfiable = true;
 			
 			int extraPerms = 0;
 			

@@ -6,13 +6,15 @@ import java.util.*;
 public class Request {
 	
 	
-	private HashSet<Permission> permissons;
+	private HashSet<Permission> permissions = new HashSet<Permission>();
+	private Policy policy; 
 	//private HashMap<Role, HashSet<Role>> roleHierarchy;
 	//private HashMap<Integer, HashSet<Permission>> rolePermissionsMap;
 	
 	
-	public Request(HashSet<Permission> permissons) {
-		setPermissons(permissons);
+	public Request(HashSet<String> permissions, Policy policy) {
+		setPolicy(policy);
+		setPermissions(permissions);
 	}
 	
 	
@@ -24,11 +26,33 @@ public class Request {
 		
 	}
 
-	public HashSet<Permission> getPermissons() {
-		return permissons;
+	public HashSet<Permission> getPermissions() {
+		return permissions;
 	}
 
-	public void setPermissons(HashSet<Permission> permissons) {
-		this.permissons = permissons;
+	public void setPermissions(HashSet<String> permissions) {
+		ArrayList<Permission> policyPermissions = policy.getPermissions();
+		//HashSet<String> policyPermissions = new HashSet<String>();
+		/*
+		for (Permission permission : policy.getPermissions()) {
+			policyPermissions.add(permission.getPermissionName());
+		}*/
+		
+		for (Permission permission : policyPermissions) {
+			if (permissions.contains(permission.getPermissionName()) && 
+					!this.permissions.contains(permission)) {
+				this.permissions.add(permission);
+			}
+		}
+	}
+
+
+	public Policy getPolicy() {
+		return policy;
+	}
+
+
+	public void setPolicy(Policy policy) {
+		this.policy = policy;
 	}
 }

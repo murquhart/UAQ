@@ -16,12 +16,15 @@ public class RequestGenerator {
 		HashSet<Request> requests = new HashSet<Request>();
 		for (int i=0; i < numRequests; i++) {
 			
-			HashSet<Permission> requestPermissions = new HashSet<Permission>();
+			HashSet<String> requestPermissions = new HashSet<String>();
 			
-			for (int j=0; j < minRequestSize + r.nextInt(maxRequestSize - minRequestSize + 1); j++)
-				while (!requestPermissions.add(policyPermissions.get(r.nextInt(policyPermissionCount))));
+			for (int j=0; j < minRequestSize + r.nextInt(maxRequestSize - minRequestSize + 1); j++) {
+				int rand = r.nextInt(policyPermissionCount);
+				while (requestPermissions.contains(policyPermissions.get(rand))) rand = r.nextInt(policyPermissionCount);
+				requestPermissions.add(policyPermissions.get(rand).getPermissionName());
+			}
 			
-			requests.add(new Request(requestPermissions));
+			requests.add(new Request(requestPermissions, policy));
 		}
 		
 		return requests;

@@ -1,7 +1,9 @@
 package edu.psu.msu5001.rbac;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -12,6 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 public class Policy {
 	
@@ -34,6 +37,12 @@ public class Policy {
 		return policy;
 	}
 	
+	public static Policy getPolicyInstance(File xml) {
+		policy = new Policy();
+		policy.parseXml(xml);
+		return policy;
+	}
+	
 	/*public static Policy getPolicyInstance(Hashtable<Integer, Role> roleTable, HashSet<Sod> sodSet) {
 		if (policy == null) policy = new Policy(roleTable, sodSet);
 		return policy;
@@ -41,8 +50,11 @@ public class Policy {
 	
 	public ArrayList<Permission> getPermissions() {
 		ArrayList<Permission> permissions = new ArrayList<Permission>();
-		for (Role role : roleTable.values()) 
-			permissions.addAll(role.getRolePermissions());
+		for (Role role : roleTable.values()) {
+			for (Permission permission : role.getRolePermissions()) {
+				if (!permissions.contains(permission)) permissions.add(permission);
+			}
+		}
 		return permissions;
 	}
 	
@@ -207,5 +219,85 @@ public class Policy {
 
 		return roleEle;
 	}
-
+	
+	private void parseXml(File xml) {
+		
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = null;
+		Document doc = null;
+		
+		//Hashtable <Integer, Role> xmlRoleTable = new Hashtable <Integer, Role>();
+		HashSet<Sod> xmlSodSet = new HashSet<Sod>();
+		
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			doc = dBuilder.parse(xml);
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Node root = doc.getDocumentElement();
+		root.normalize();
+		
+		Node node = root.getFirstChild();
+		Hashtable<String, Permission> masterPermissions = new Hashtable<String, Permission>();
+		do {
+			if (node.getNodeType() != Node.ELEMENT_NODE) {
+				node = node.getNextSibling();
+				continue;
+			}
+			Element ele = (Element) node;
+			if (ele.getNodeName() == "Role") {
+				HashSet<Permission> permissions = new HashSet<Permission>();
+				NodeList nList = ele.getElementsByTagName("permission");
+				for (int i = 0; i < nList.getLength(); i++) {
+					Permission permission = new Permission(nList.item(i).getTextContent());
+					if (masterPermissions.containsKey(permission.getPermissionName())) permission = masterPermissions.get(permission.getPermissionName());
+					else masterPermissions.put(permission.getPermissionName(), permission);
+					permissions.add(permission);
+				}
+				new Role(Integer.parseInt(ele.getAttribute("id")),this,ele.getAttribute("Name"),permissions, new HashSet<Role>(), new HashSet<Role>());
+			}
+			else if (ele.getNodeName() == "sod") {
+				HashSet<Role> roleSet = new HashSet<Role>();
+				
+				NodeList nList = ele.getElementsByTagName("role");
+				for (int i = 0; i < nList.getLength(); i++) {
+					Element roleEle = (Element) nList.item(i);
+					roleSet.add(roleTable.get(Integer.parseInt(roleEle.getAttribute("id"))));
+				}
+				xmlSodSet.add(new Sod(roleSet, Integer.parseInt(ele.getAttribute("t"))));
+			}
+			node = node.getNextSibling();
+		} while (node != null);
+		
+		setSodSet(xmlSodSet);
+		
+		NodeList nList = doc.getElementsByTagName("Role");
+		for (int i = 0; i < nList.getLength(); i++) {
+			Element roleEle = (Element) nList.item(i);
+			NodeList childList = roleEle.getElementsByTagName("childRole");
+			for (int j = 0; j < childList.getLength(); j++) {
+				Element childEle = (Element) childList.item(j);
+				roleTable.get(roleEle.getAttribute("id")).addChild(roleTable.get(Integer.parseInt(childEle.getAttribute("id"))));
+			}
+		}
+		for (int i = 0; i < nList.getLength(); i++) {
+			Element roleEle = (Element) nList.item(i);
+			NodeList parentList = roleEle.getElementsByTagName("parentRole");
+			for (int j = 0; j < parentList.getLength(); j++) {
+				Element parentEle = (Element) parentList.item(j);
+				roleTable.get(roleEle.getAttribute("id")).addParent(roleTable.get(Integer.parseInt(parentEle.getAttribute("id"))));
+			}
+		}
+	}
 }
